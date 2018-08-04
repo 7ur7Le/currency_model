@@ -7,16 +7,138 @@ from .models import Currency
 
 # Create your views here.
 def pair_detail(request):
-    # import pdb; pdb.set_trace()
-    pairs = Pair.objects.values('trade', 'base', 'transaction_fee', 'trade_minimum', 'base_minimum', 'tag', 'note',
+    all_pairs = Pair.objects.all()
+    pairs_info = Pair.objects.values('trade', 'base', 'trade_name', 'base_name', 'transaction_fee',
+                                'trade_minimum', 'base_minimum', 'tag', 'note',
                                 'req_note')  # or simply .values() to get all fields
-    currency = Currency.objects.values('name', 'icon', 'ticker', 'blockchain_type', 'withdrawl_minimum', 'withdrawl_fee',
-                                       'decimal_point', 'is_base', 'is_reusable', 'address_length', 'sync_deposit',
-                                       'abi', 'ERC20', 'contract_address', 'transaction_confirmation_count')
-    pair_list = list(pairs)  # important: convert the QuerySet to a list object
-    currency_list = list(currency)
+
+    currency_info = Currency.objects.values('name', 'icon', 'ticker',
+                                           'withdrawal_minimum',
+                                           'decimal_point', 'is_base', 'is_reusable', 'address_length')
+
+    currency = Currency.objects.values('ticker')
+    currency_data = list()
+    for c in currency:
+        currency_data.append(c["ticker"])
+    currency_list = currency_data
+
+    data = list()
+    for p in all_pairs:
+        data.append(p.trade_pair)
+    pairs = data
+    pair_list = list(pairs_info)  # important: convert the QuerySet to a list object
+
+    currencyInfoList = list()
+    currencyDict = dict()
+    for info in currency_info:
+        row = dict()
+        row['name'] = info['name']
+        row['icon'] = info['icon']
+        row['withdrawal_minimum'] = info['withdrawal_minimum']
+        row['decimal_point'] = info['decimal_point']
+        row['is_base'] = info['is_base']
+        row['is_reusable'] = info['is_reusable']
+        row['address_length'] = info['address_length']
+        currencyDict[info['ticker']] = row
+    currencyInfoList.append(currencyDict)
+
+    pairInfoList = list()
+    pairDict = dict()
+    for info in pairs_info:
+        row = dict()
+        row['base'] = info['base']
+        row['trade'] = info['trade']
+        row['base_name'] = info['base_name']
+        row['trade_name'] = info['trade_name']
+        row['transaction_fee'] = info['transaction_fee']
+        row['trade_minimum'] = info['trade_minimum']
+        row['base_minimum'] = info['base_minimum']
+        row['tag'] = info['tag']
+        row['note'] = info['note']
+        row['req_note'] = info['req_note']
+        pairDict[info['trade']+'-'+info['base']] = row
+        pairInfoList.append(pairDict)
+    #list(currency_info)
+    #currencyDict['Ticker'] = list(currency_info)
     response = {
-        "currency": currency_list, "pair": pair_list
+        "currency": currency_list, "pairs": pairs, "PairInfo": pairInfoList, "CurrencyInfo": currencyInfoList
     }
     return JsonResponse(response, safe=False)
 
+
+"""
+
+"ETH-BTC": {
+            "base":"BTC",
+            "trade":"ETH",
+            "base_name": "Bitcoin",
+            "trade_name":"Etherium",
+            "transaction_fee":"0.00005",
+            "trade_minimum":"0.50000",
+            "base_minimum":"0.10000",
+            "tag":false,
+            "note":"This is a note.",
+            "req_note":"This is a requirement note."
+        }
+        {
+    "currency": ["BTC","ETH","LTC"],
+    "pair" : ["ETH-BTC","LTC-BTC"],
+    "currencyInfo":
+    {
+        "BTC": {
+            "name":"Bitcoin",
+            "icon":"https://www.cryptocompare.com/media/19633/btc.png?width=200",
+            "withdrawl_minimum":"0.05000",
+            "decimal_point":6,
+            "is_base":true,
+            "is_reusable":true,
+            "address_length":40
+        },
+        "ETH":{
+            "name":"Ethereum",
+            "icon":"https://www.cryptocompare.com/media/19633/btc.png?width=200",
+            "withdrawl_minimum":"0.05000",
+            "decimal_point":6,
+            "is_base":true,
+            "is_reusable":true,
+            "address_length":40
+        },
+       "LTC": {
+            "name":"Litecoin",
+            "icon":"https://www.cryptocompare.com/media/19633/btc.png?width=200",
+            "withdrawl_minimum":"4.50000",
+            "decimal_point":1,
+            "is_base":false,
+            "is_reusable":true,
+            "address_length":40
+        }
+    },
+
+    "pairInfo":{
+        "ETH-BTC": {
+            "base":"BTC",
+            "trade":"ETH",
+            "base_name": "Bitcoin",
+            "trade_name":"Etherium",
+            "transaction_fee":"0.00005",
+            "trade_minimum":"0.50000",
+            "base_minimum":"0.10000",
+            "tag":false,
+            "note":"This is a note.",
+            "req_note":"This is a requirement note."
+        },
+        "LTC-BTC": {
+            "base":"BTC",
+            "trade":"LTC",
+            "base_name": "Bitcoin",
+            "trade_name":"Litecoin",
+            "transaction_fee":"0.00000",
+            "trade_minimum":"0.00000",
+            "base_minimum":"0.00000",
+            "tag":true,"note":"This is a note.",
+            "req_note":"This is a requirement note."
+        }
+    }
+}
+
+"""

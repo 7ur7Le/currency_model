@@ -30,12 +30,15 @@ class Currency(models.Model):
     address_length = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return self.name
+        return self.ticker
 
 
 class Pair(models.Model):
     trade = models.ForeignKey(Currency, related_name='trade', on_delete=models.CASCADE)
     base = models.ForeignKey(Currency, related_name='base', on_delete=models.CASCADE, limit_choices_to={'is_base': True})
+    trade_name = models.ForeignKey(Currency, related_name='trade_name', on_delete=models.CASCADE, default='')
+    base_name = models.ForeignKey(Currency, related_name='base_name', on_delete=models.CASCADE,
+                                  limit_choices_to={'is_base': True}, default='')
     transaction_fee = models.DecimalField(max_digits=50, decimal_places=5, default=0)
     trade_minimum = models.DecimalField(max_digits=50, decimal_places=5, default=0)
     base_minimum = models.DecimalField(max_digits=50, decimal_places=5, default=0)
@@ -43,5 +46,10 @@ class Pair(models.Model):
     note = models.CharField(max_length=200, default='')
     req_note = models.CharField(max_length=200, default='')
 
-    def __str__(self):
-        return str(self.trade)+"/"+str(self.base)
+    @property
+    def trade_pair(self):
+        return "%s-%s" % (self.trade, self.base)
+
+
+    # def __str__(self):
+    #     return str(self.trade)+"-"+str(self.base)
