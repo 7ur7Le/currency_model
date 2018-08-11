@@ -6,6 +6,7 @@ class Currency(models.Model):
         ('BTC', 'btc'),
         ('ETH', 'eth'),
         ('LTC', 'ltc'),
+        ('OMNI', 'omni'),
     )
     """
         decimal_point(integer)
@@ -14,7 +15,7 @@ class Currency(models.Model):
         address_length(integer)
     """
     icon = models.CharField(max_length=200)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     ticker = models.CharField(max_length=5, primary_key=True)
     withdrawal_fee = models.DecimalField(max_digits=50, decimal_places=5, default=0)
     withdrawal_minimum = models.DecimalField(max_digits=50, decimal_places=5, default=0)
@@ -36,12 +37,14 @@ class Currency(models.Model):
 class Pair(models.Model):
     trade = models.ForeignKey(Currency, related_name='trade', on_delete=models.CASCADE)
     base = models.ForeignKey(Currency, related_name='base', on_delete=models.CASCADE, limit_choices_to={'is_base': True})
-    trade_name = models.ForeignKey(Currency, related_name='trade_name', on_delete=models.CASCADE, default='')
+    trade_name = models.ForeignKey(Currency, related_name='trade_name', on_delete=models.CASCADE, default='',
+                                   to_field='name')
     base_name = models.ForeignKey(Currency, related_name='base_name', on_delete=models.CASCADE,
                                   limit_choices_to={'is_base': True}, default='')
     transaction_fee = models.DecimalField(max_digits=50, decimal_places=5, default=0)
-    trade_minimum = models.DecimalField(max_digits=50, decimal_places=5, default=0)
-    base_minimum = models.DecimalField(max_digits=50, decimal_places=5, default=0)
+    decimal_point_trade = models.PositiveIntegerField(default=1)
+    decimal_point_base = models.PositiveIntegerField(default=1)
+    total_minimum = models.DecimalField(max_digits=50, decimal_places=5, default=0)
     tag = models.BooleanField(default=False)
     note = models.CharField(max_length=200, default='')
     req_note = models.CharField(max_length=200, default='')

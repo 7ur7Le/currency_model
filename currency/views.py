@@ -28,7 +28,7 @@ def pair_detail(request):
     pairs = data
     pair_list = list(pairs_info)  # important: convert the QuerySet to a list object
 
-    currencyInfoList = list()
+    currencyInfoList = dict()
     currencyDict = dict()
     for info in currency_info:
         row = dict()
@@ -39,10 +39,10 @@ def pair_detail(request):
         row['is_base'] = info['is_base']
         row['is_reusable'] = info['is_reusable']
         row['address_length'] = info['address_length']
-        currencyDict[info['ticker']] = row
-    currencyInfoList.append(currencyDict)
+        currencyInfoList[info['ticker']] = row
+        #append(currencyDict)
 
-    pairInfoList = list()
+    pairInfoList = dict()
     pairDict = dict()
     for info in pairs_info:
         row = dict()
@@ -51,13 +51,13 @@ def pair_detail(request):
         row['base_name'] = info['base_name']
         row['trade_name'] = info['trade_name']
         row['transaction_fee'] = info['transaction_fee']
-        row['trade_minimum'] = info['trade_minimum']
-        row['base_minimum'] = info['base_minimum']
+        row['decimal_point_trade'] = info['decimal_point_trade']
+        row['decimal_point_base'] = info['decimal_point_base']
         row['tag'] = info['tag']
         row['note'] = info['note']
         row['req_note'] = info['req_note']
-        pairDict[info['trade']+'-'+info['base']] = row
-        pairInfoList.append(pairDict)
+        row['total_minimum'] = info['total_minimum']
+        pairInfoList[info['trade']+'-'+info['base']] = row
     #list(currency_info)
     #currencyDict['Ticker'] = list(currency_info)
     response = {
