@@ -8,7 +8,7 @@ from .models import Currency
 # Create your views here.
 def pair_detail(request):
     all_pairs = Pair.objects.all()
-    pairs_info = Pair.objects.values('trade', 'base', 'trade_name', 'base_name', 'transaction_fee',
+    pairs_info = Pair.objects.values('trade', 'base', 'trade_name', 'base_name',
                                 'decimal_point_trade', 'decimal_point_base', 'total_minimum', 'tag', 'note',
                                 'req_note')  # or simply .values() to get all fields
 
@@ -50,7 +50,6 @@ def pair_detail(request):
         row['trade'] = info['trade']
         row['base_name'] = info['base_name']
         row['trade_name'] = info['trade_name']
-        row['transaction_fee'] = info['transaction_fee']
         row['decimal_point_trade'] = info['decimal_point_trade']
         row['decimal_point_base'] = info['decimal_point_base']
         row['total_minimum'] = info['total_minimum']

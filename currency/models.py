@@ -41,7 +41,6 @@ class Pair(models.Model):
                                    to_field='name')
     base_name = models.ForeignKey(Currency, related_name='base_name', on_delete=models.CASCADE,
                                   limit_choices_to={'is_base': True}, default='')
-    transaction_fee = models.DecimalField(max_digits=50, decimal_places=5, default=0)
     decimal_point_trade = models.PositiveIntegerField(default=1)
     decimal_point_base = models.PositiveIntegerField(default=1)
     total_minimum = models.DecimalField(max_digits=50, decimal_places=5, default=0)
@@ -52,6 +51,9 @@ class Pair(models.Model):
     @property
     def trade_pair(self):
         return "%s-%s" % (self.trade, self.base)
+
+    def __str__(self):
+        return str(self.trade) +'/'+ str(self.base)
 
 
     # def __str__(self):
