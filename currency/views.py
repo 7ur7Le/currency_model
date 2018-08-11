@@ -9,7 +9,7 @@ from .models import Currency
 def pair_detail(request):
     all_pairs = Pair.objects.all()
     pairs_info = Pair.objects.values('trade', 'base', 'trade_name', 'base_name', 'transaction_fee',
-                                'trade_minimum', 'base_minimum', 'tag', 'note',
+                                'decimal_point_trade', 'decimal_point_base', 'total_minimum', 'tag', 'note',
                                 'req_note')  # or simply .values() to get all fields
 
     currency_info = Currency.objects.values('name', 'icon', 'ticker',
@@ -53,10 +53,10 @@ def pair_detail(request):
         row['transaction_fee'] = info['transaction_fee']
         row['decimal_point_trade'] = info['decimal_point_trade']
         row['decimal_point_base'] = info['decimal_point_base']
+        row['total_minimum'] = info['total_minimum']
         row['tag'] = info['tag']
         row['note'] = info['note']
         row['req_note'] = info['req_note']
-        row['total_minimum'] = info['total_minimum']
         pairInfoList[info['trade']+'-'+info['base']] = row
     #list(currency_info)
     #currencyDict['Ticker'] = list(currency_info)

@@ -5,7 +5,7 @@ class PairTrade(admin.TabularInline):
     save_on_top = True
     model = Pair
     fk_name = 'trade'
-    fields = ['base', 'trade_minimum', 'base_minimum']
+    fields = ['base', 'decimal_point_trade', 'decimal_point_base']
     readonly_fields = ['trade']
 
 
@@ -13,7 +13,7 @@ class PairBase(admin.TabularInline):
     save_on_top = True
     model = Pair
     fk_name = 'base'
-    fields = ['trade', 'trade_minimum', 'base_minimum']
+    fields = ['trade', 'decimal_point_trade', 'decimal_point_base']
     readonly_fields = ['base']
 
 
